@@ -3,7 +3,7 @@ variable "ClusterName" {
 }
 
 variable "InstancesCount" {
-  default = 3
+  default = 1
 }
 
 # AMI are region specific. Need to add mapping later
