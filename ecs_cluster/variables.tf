@@ -8,7 +8,7 @@ variable "InstancesCount" {
 
 # AMI are region specific. Need to add mapping later
 variable "InstanceAMI" {
-    default = "ami-0ab1db011871746ef"
+    default = "ami-01933d3dbcb8f63e0"
 }
 
 variable "InstanceType" {
