@@ -41,13 +41,7 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
 
     tag {
         key = "Name"
-        value = "ECS-myecscluster"
+        value = "ECS-${var.ClusterName}"
         propagate_at_launch = true
     }
-}
-
-
-
-output "subnets" {
-    value = "${data.aws_subnet.example.*.id}"
 }
