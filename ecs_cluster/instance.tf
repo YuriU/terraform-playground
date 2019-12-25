@@ -22,7 +22,7 @@ resource "aws_launch_configuration" "ecs-launch-configuration" {
     # register the cluster name with ecs-agent which will in turn coord
     # with the AWS api about the cluster
     #
-    user_data = <<-EOF
+    user_data = <<EOF
         #!/bin/bash
         echo "ECS_CLUSTER=${aws_ecs_cluster.cluster.name}" > /etc/ecs/ecs.config
     EOF
@@ -35,8 +35,7 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
     min_size = "1"
     desired_capacity = "1"
 
-    # TODO: Add all subnets of vpc
-    vpc_zone_identifier =  [ "${data.aws_subnet.example.0.id}" ]
+    vpc_zone_identifier =  ["${data.aws_subnet.example.*.id}"]
     launch_configuration = "${aws_launch_configuration.ecs-launch-configuration.name}"
     health_check_type = "ELB"
 
