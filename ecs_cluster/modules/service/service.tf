@@ -2,11 +2,11 @@ resource "aws_alb_target_group" "service_target_group" {
     name = "my-alb-group"
     port = 80
     protocol = "HTTP"
-    vpc_id = "${data.aws_vpc.default.id}"
+    vpc_id = "${var.VpcId}"
 }
 
 resource "aws_alb_listener" "front_end" {
-    load_balancer_arn = "${aws_alb.main.id}"
+    load_balancer_arn = "${var.LoadBallancerId}"
     port = "80"
     protocol = "HTTP"
 
@@ -18,8 +18,8 @@ resource "aws_alb_listener" "front_end" {
 
 resource "aws_ecs_service" "test-ecs-service" {
     name = "test-vz-service"
-    cluster = "${module.cluster.ClusterId}"
-    task_definition = "${aws_ecs_task_definition.test.family}:${max("${aws_ecs_task_definition.test.revision}", "${data.aws_ecs_task_definition.test.revision}")}"
+    cluster = "${var.ClusterId}"
+    task_definition = "${aws_ecs_task_definition.task_definition.family}:${max("${aws_ecs_task_definition.task_definition.revision}", "${data.aws_ecs_task_definition.existing_task_definition.revision}")}"
     desired_count = 1
     iam_role = "${aws_iam_role.ecs-service-role.name}"
 

@@ -1,10 +1,10 @@
-data "aws_ecs_task_definition" "test" {
-    task_definition = "${aws_ecs_task_definition.test.family}"
-    depends_on = ["aws_ecs_task_definition.test"]
+data "aws_ecs_task_definition" "existing_task_definition" {
+    task_definition = "${aws_ecs_task_definition.task_definition.family}"
+    depends_on = ["aws_ecs_task_definition.task_definition"]
 }
 
-resource "aws_ecs_task_definition" "test" {
-    family = "test-family"
+resource "aws_ecs_task_definition" "task_definition" {
+    family = "${var.ServiceName}"
     container_definitions = <<DEFINITION
     [
         {
