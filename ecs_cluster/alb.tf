@@ -18,6 +18,6 @@ resource "aws_security_group" "web_server" {
 
 resource "aws_alb" "main" {
     name = "my-alb-ecs"
-    subnets = ["${data.aws_subnet.example.*.id}"]
+    subnets = ["${data.aws_subnet.default_subnets.*.id}"]
     security_groups = ["${aws_security_group.web_server.id}"]
 }

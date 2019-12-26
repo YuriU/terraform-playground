@@ -4,7 +4,7 @@ module "cluster" {
     InstancesCount              = "${var.InstancesCount}"
     InstanceType                = "${var.InstanceType}"
     InstanceAMI                 = "${var.InstanceAMI}"
-    SubnetIds                   = ["${data.aws_subnet.example.*.id}"]
+    SubnetIds                   = ["${data.aws_subnet.default_subnets.*.id}"]
     BalancerSecurityGroupId     = "${aws_security_group.web_server.id}"
 }
 
