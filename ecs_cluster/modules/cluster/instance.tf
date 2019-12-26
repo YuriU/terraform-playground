@@ -1,3 +1,26 @@
+resource "aws_security_group" "web_server" {
+  name = "${var.ClusterName}Instance-SecurityGroup"
+
+  egress {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group_rule" "allow_balancer" {
+  type = "ingress"
+  protocol = "tcp"
+
+  # Allowing all ports as ecs uses dynamic port mapping
+  from_port = 0
+  to_port = 65535
+
+  security_group_id = "${aws_security_group.web_server.id}"
+  source_security_group_id = "${var.BalancerSecurityGroupId}"
+}
+
 resource "aws_launch_configuration" "ecs-launch-configuration" {
     name = "${var.ClusterName}-launch-configuration"
     image_id = "${var.InstanceAMI}"
@@ -15,7 +38,7 @@ resource "aws_launch_configuration" "ecs-launch-configuration" {
         create_before_destroy = true
     }
 
-    //security_groups = ["${aws_security_group.allow_all.id}"]
+    security_groups = ["${aws_security_group.web_server.id}"]
     associate_public_ip_address = "false"
 
     #
@@ -35,7 +58,6 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
     min_size = "${var.InstancesCount}"
     desired_capacity = "${var.InstancesCount}"
 
-    //vpc_zone_identifier =  ["${data.aws_subnet.example.*.id}"]
     vpc_zone_identifier =  ["${var.SubnetIds}"]
     launch_configuration = "${aws_launch_configuration.ecs-launch-configuration.name}"
     health_check_type = "ELB"
