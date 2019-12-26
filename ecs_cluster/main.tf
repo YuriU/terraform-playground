@@ -14,4 +14,5 @@ module "apache" {
     LoadBallancerId             = "${aws_alb.main.id}"
     ServiceName                 = "apache"
     ClusterId                   = "${module.cluster.ClusterId}"
+    ListenerArn                 = "${aws_alb_listener.front_end.arn}"
 }

@@ -5,15 +5,20 @@ resource "aws_alb_target_group" "service_target_group" {
     vpc_id = "${var.VpcId}"
 }
 
-resource "aws_alb_listener" "front_end" {
-    load_balancer_arn = "${var.LoadBallancerId}"
-    port = "80"
-    protocol = "HTTP"
+resource "aws_lb_listener_rule" "host_based_routing" {
+  listener_arn = "${var.ListenerArn}"
+  priority     = 99
 
-    default_action {
-        target_group_arn = "${aws_alb_target_group.service_target_group.id}"
-        type = "forward"
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_alb_target_group.service_target_group.arn}"
+  }
+
+  condition {
+    path_pattern {
+      values = ["/apache/*", "/apache", "/index.html"]
     }
+  }
 }
 
 resource "aws_ecs_service" "test-ecs-service" {
@@ -28,9 +33,4 @@ resource "aws_ecs_service" "test-ecs-service" {
         container_name = "apache"
         container_port = "8080"
     }
-
-    depends_on = [
-        #"aws_iam_role_policy.ecs-service",
-        "aws_alb_listener.front_end",
-    ]
 }

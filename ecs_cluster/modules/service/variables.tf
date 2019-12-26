@@ -9,3 +9,7 @@ variable "VpcId" {
 
 variable "LoadBallancerId" {
 }
+
+variable "ListenerArn" {
+
+}

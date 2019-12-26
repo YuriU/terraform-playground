@@ -21,3 +21,19 @@ resource "aws_alb" "main" {
     subnets = ["${data.aws_subnet.default_subnets.*.id}"]
     security_groups = ["${aws_security_group.web_server.id}"]
 }
+
+resource "aws_alb_listener" "front_end" {
+    load_balancer_arn = "${aws_alb.main.id}"
+    port = "80"
+    protocol = "HTTP"
+
+    default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "No service found"
+      status_code  = "200"
+    }
+  }
+}
