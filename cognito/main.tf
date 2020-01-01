@@ -33,6 +33,7 @@ resource "aws_cognito_user_pool_client" "client" {
       "aws_cognito_identity_provider.google_provider"
   ]
 
+  generate_secret     = true
   explicit_auth_flows = []
 
   allowed_oauth_flows = ["implicit"]
