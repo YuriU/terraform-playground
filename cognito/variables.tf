@@ -1,0 +1,5 @@
+variable "GoogleAppId" {
+}
+
+variable "GoogleAppSecret" {
+}
