@@ -29,6 +29,17 @@ resource "aws_cognito_identity_provider" "google_provider" {
 resource "aws_cognito_user_pool_client" "client" {
   name = "${var.ClientName}"
 
+  depends_on  = [ 
+      "aws_cognito_identity_provider.google_provider"
+  ]
+
+  explicit_auth_flows = []
+
+  allowed_oauth_flows = ["implicit"]
+  allowed_oauth_scopes = [ "email", "openid", "profile" ]
+
+  allowed_oauth_flows_user_pool_client = true
+
   supported_identity_providers = ["Google"]
   callback_urls     = ["http://localhost:8080/"]
   logout_urls       = ["http://localhost:8080/"]
