@@ -2,8 +2,12 @@ variable "ClusterName" {
   default = "TestCluster"
 }
 
-variable "InstancesCount" {
+variable "MinInstancesCount" {
   default = 1
+}
+
+variable "MaxInstancesCount" {
+  default = 5
 }
 
 # AMI are region specific. Need to add mapping later

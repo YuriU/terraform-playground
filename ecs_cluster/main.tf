@@ -1,8 +1,8 @@
 module "cluster" {
     source                      = "./modules/cluster"
     ClusterName                 = "${var.ClusterName}"
-    MinInstancesCount              = 1
-    MaxInstancesCount              = 5
+    MinInstancesCount           = "${var.MinInstancesCount}"
+    MaxInstancesCount           = "${var.MaxInstancesCount}"
     InstanceType                = "${var.InstanceType}"
     InstanceAMI                 = "${var.InstanceAMI}"
     SubnetIds                   = ["${data.aws_subnet.default_subnets.*.id}"]
@@ -16,5 +16,5 @@ module "apache" {
     ServiceName                 = "apache"
     ClusterId                   = "${module.cluster.ClusterId}"
     ListenerArn                 = "${aws_alb_listener.front_end.arn}"
-    DesiredCount                = 7
+    DesiredCount                = 1
 }
