@@ -25,7 +25,7 @@ resource "aws_ecs_service" "test-ecs-service" {
     name = "test-vz-service"
     cluster = "${var.ClusterId}"
     task_definition = "${aws_ecs_task_definition.task_definition.family}:${max("${aws_ecs_task_definition.task_definition.revision}", "${data.aws_ecs_task_definition.existing_task_definition.revision}")}"
-    desired_count = 1
+    desired_count = "${var.DesiredCount}"
     iam_role = "${aws_iam_role.ecs-service-role.name}"
 
     load_balancer {

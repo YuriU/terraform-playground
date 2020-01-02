@@ -54,8 +54,8 @@ resource "aws_launch_configuration" "ecs-launch-configuration" {
 
 resource "aws_autoscaling_group" "ecs-autoscaling-group" {
     name = "${var.ClusterName}-autoscaling-group"
-    max_size = "${var.InstancesCount}"
-    min_size = "${var.InstancesCount}"
+    max_size = "${var.MinInstancesCount}"
+    min_size = "${var.MaxInstancesCount}"
     desired_capacity = "${var.InstancesCount}"
 
     vpc_zone_identifier =  ["${var.SubnetIds}"]
@@ -67,4 +67,30 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
         value = "ECS-${var.ClusterName}"
         propagate_at_launch = true
     }
+}
+
+resource "aws_autoscaling_policy" "auto_scaling_policy" {
+  name                   = "foobar3-terraform-test"
+  scaling_adjustment     = 1
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = 60
+  autoscaling_group_name = "${aws_autoscaling_group.ecs-autoscaling-group.name}"
+}
+
+resource "aws_cloudwatch_metric_alarm" "scale_out_alarm" {
+  alarm_name          = "${var.ClusterName}_OutOfReservedCpu"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "CPUReservation"
+  namespace           = "AWS/ECS"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "70"
+
+  dimensions {
+    ClusterName = "${var.ClusterName}"
+  }
+
+  alarm_description = "Cluster run out of CPUReservation"
+  alarm_actions     = ["${aws_autoscaling_policy.auto_scaling_policy.arn}"]
 }

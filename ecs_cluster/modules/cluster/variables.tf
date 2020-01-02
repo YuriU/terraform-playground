@@ -1,7 +1,10 @@
 variable "ClusterName" {
 }
 
-variable "InstancesCount" {
+variable "MinInstancesCount" {
+}
+
+variable "MaxInstancesCount" {
 }
 
 variable "InstanceAMI" {
