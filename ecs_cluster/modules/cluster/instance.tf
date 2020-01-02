@@ -51,12 +51,15 @@ resource "aws_launch_configuration" "ecs-launch-configuration" {
     EOF
 }
 
+data "aws_autoscaling_group" "existing_ecs-autoscaling-group" {
+    name = "${var.ClusterName}-autoscaling-group"
+}
 
 resource "aws_autoscaling_group" "ecs-autoscaling-group" {
     name = "${var.ClusterName}-autoscaling-group"
     max_size = "${var.MaxInstancesCount}"
     min_size = "${var.MinInstancesCount}"
-    desired_capacity = "${var.MinInstancesCount}"
+    desired_capacity = "${max("${var.MinInstancesCount}", "${data.aws_autoscaling_group.existing_ecs-autoscaling-group.desired_capacity}")}"
 
     vpc_zone_identifier =  ["${var.SubnetIds}"]
     launch_configuration = "${aws_launch_configuration.ecs-launch-configuration.name}"
@@ -68,6 +71,8 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
         propagate_at_launch = true
     }
 }
+
+
 
 resource "aws_autoscaling_policy" "auto_scaling_policy" {
   name                   = "foobar3-terraform-test"
