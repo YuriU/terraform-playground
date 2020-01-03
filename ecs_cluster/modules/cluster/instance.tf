@@ -66,17 +66,15 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
     }
 }
 
-
-
-resource "aws_autoscaling_policy" "auto_scaling_policy" {
-  name                   = "foobar3-terraform-test"
+resource "aws_autoscaling_policy" "auto_scaling_policy_up" {
+  name                   = "Scale Up by CPU Reservation"
   scaling_adjustment     = 1
   adjustment_type        = "ChangeInCapacity"
   cooldown               = 60
   autoscaling_group_name = "${aws_autoscaling_group.ecs-autoscaling-group.name}"
 }
 
-resource "aws_cloudwatch_metric_alarm" "scale_out_alarm" {
+resource "aws_cloudwatch_metric_alarm" "cpu_scale_out_alarm" {
   alarm_name          = "${var.ClusterName}_OutOfReservedCpu"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "1"
@@ -91,5 +89,31 @@ resource "aws_cloudwatch_metric_alarm" "scale_out_alarm" {
   }
 
   alarm_description = "Cluster run out of CPUReservation"
-  alarm_actions     = ["${aws_autoscaling_policy.auto_scaling_policy.arn}"]
+  alarm_actions     = ["${aws_autoscaling_policy.auto_scaling_policy_up.arn}"]
+}
+
+resource "aws_autoscaling_policy" "auto_scaling_policy_down" {
+  name                   = "Scale Down by CPU Reservation"
+  scaling_adjustment     = -1
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = 60
+  autoscaling_group_name = "${aws_autoscaling_group.ecs-autoscaling-group.name}"
+}
+
+resource "aws_cloudwatch_metric_alarm" "cpu_scale_in_alarm" {
+  alarm_name          = "${var.ClusterName}_FreeeReservedCpu"
+  comparison_operator = "LessThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "CPUReservation"
+  namespace           = "AWS/ECS"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "30"
+
+  dimensions {
+    ClusterName = "${var.ClusterName}"
+  }
+
+  alarm_description = "Cluster has too many CPUReservation"
+  alarm_actions     = ["${aws_autoscaling_policy.auto_scaling_policy_down.arn}"]
 }
