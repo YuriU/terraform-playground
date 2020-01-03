@@ -101,7 +101,7 @@ resource "aws_autoscaling_policy" "auto_scaling_policy_down" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cpu_scale_in_alarm" {
-  alarm_name          = "${var.ClusterName}_FreeeReservedCpu"
+  alarm_name          = "${var.ClusterName}_FreeReservedCpu"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "CPUReservation"
