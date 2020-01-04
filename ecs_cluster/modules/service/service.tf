@@ -1,5 +1,5 @@
 resource "aws_alb_target_group" "service_target_group" {
-    name = "my-alb-group"
+    name = "ECS-${var.ServiceName}-TargetGroup"
     port = 80
     protocol = "HTTP"
     vpc_id = "${var.VpcId}"
@@ -21,8 +21,8 @@ resource "aws_lb_listener_rule" "host_based_routing" {
   }
 }
 
-resource "aws_ecs_service" "test-ecs-service" {
-    name = "test-vz-service"
+resource "aws_ecs_service" "service" {
+    name = "${var.ServiceName}"
     cluster = "${var.ClusterId}"
     task_definition = "${aws_ecs_task_definition.task_definition.family}:${max("${aws_ecs_task_definition.task_definition.revision}", "${data.aws_ecs_task_definition.existing_task_definition.revision}")}"
     desired_count = "${var.DesiredCount}"
@@ -33,4 +33,8 @@ resource "aws_ecs_service" "test-ecs-service" {
         container_name = "apache"
         container_port = "8080"
     }
+
+    depends_on = [
+      "aws_lb_listener_rule.host_based_routing"
+    ]
 }
