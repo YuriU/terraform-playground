@@ -37,6 +37,60 @@ resource "aws_ecs_service" "service" {
     depends_on = [
       "aws_lb_listener_rule.host_based_routing"
     ]
+
+    lifecycle {
+      ignore_changes = ["desired_count"]
+    }
+}
+
+
+
+
+
+resource "aws_cloudwatch_metric_alarm" "service_scale_in_alarm" {
+  alarm_name          = "${var.ServiceName}_ScaleIn"
+  comparison_operator = "LessThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "MyTestMetric"
+  namespace           = "TEST/ECS"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "30"
+
+  dimensions {
+    ServiceName = "${var.ServiceName}"
+  }
+
+  alarm_description = "Service can free some instances"
+  //alarm_actions     = ["${aws_autoscaling_policy.auto_scaling_policy_up.arn}"]
+}
+
+resource "aws_appautoscaling_target" "ecs_target" {
+  max_capacity       = 15
+  min_capacity       = 1
+  resource_id        = "service/${var.ClusterId}/${var.ServiceName}"
+  role_arn           = "${aws_iam_role.ecs-service-role.arn}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
+
+resource "aws_appautoscaling_policy" "scale_up" {
+  name               = "scale-up"
+  policy_type        = "StepScaling"
+  resource_id        = "${aws_appautoscaling_target.ecs_target.resource_id}"
+  scalable_dimension = "${aws_appautoscaling_target.ecs_target.scalable_dimension}"
+  service_namespace  = "${aws_appautoscaling_target.ecs_target.service_namespace}"
+
+  step_scaling_policy_configuration {
+    adjustment_type         = "ChangeInCapacity"
+    cooldown                = 60
+    metric_aggregation_type = "Maximum"
+
+    step_adjustment {
+      metric_interval_upper_bound = 0
+      scaling_adjustment          = 1
+    }
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "service_scale_out_alarm" {
@@ -54,23 +108,5 @@ resource "aws_cloudwatch_metric_alarm" "service_scale_out_alarm" {
   }
 
   alarm_description = "Service needs more instances"
-  //alarm_actions     = ["${aws_autoscaling_policy.auto_scaling_policy_up.arn}"]
-}
-
-resource "aws_cloudwatch_metric_alarm" "service_scale_in_alarm" {
-  alarm_name          = "${var.ServiceName}_ScaleIn"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = "1"
-  metric_name         = "MyTestMetric"
-  namespace           = "TEST/ECS"
-  period              = "60"
-  statistic           = "Average"
-  threshold           = "70"
-
-  dimensions {
-    ServiceName = "${var.ServiceName}"
-  }
-
-  alarm_description = "Service needs more instances"
-  //alarm_actions     = ["${aws_autoscaling_policy.auto_scaling_policy_up.arn}"]
+  alarm_actions     = ["${aws_appautoscaling_policy.scale_up.arn}"]
 }
