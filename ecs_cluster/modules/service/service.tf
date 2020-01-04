@@ -38,3 +38,39 @@ resource "aws_ecs_service" "service" {
       "aws_lb_listener_rule.host_based_routing"
     ]
 }
+
+resource "aws_cloudwatch_metric_alarm" "service_scale_out_alarm" {
+  alarm_name          = "${var.ServiceName}_ScaleOut"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "MyTestMetric"
+  namespace           = "TEST/ECS"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "70"
+
+  dimensions {
+    ServiceName = "${var.ServiceName}"
+  }
+
+  alarm_description = "Service needs more instances"
+  //alarm_actions     = ["${aws_autoscaling_policy.auto_scaling_policy_up.arn}"]
+}
+
+resource "aws_cloudwatch_metric_alarm" "service_scale_in_alarm" {
+  alarm_name          = "${var.ServiceName}_ScaleIn"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "MyTestMetric"
+  namespace           = "TEST/ECS"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "70"
+
+  dimensions {
+    ServiceName = "${var.ServiceName}"
+  }
+
+  alarm_description = "Service needs more instances"
+  //alarm_actions     = ["${aws_autoscaling_policy.auto_scaling_policy_up.arn}"]
+}
