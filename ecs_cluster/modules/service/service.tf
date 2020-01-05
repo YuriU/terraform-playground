@@ -7,6 +7,8 @@ resource "aws_alb_target_group" "service_target_group" {
     port = 80
     protocol = "HTTP"
     vpc_id = "${var.VpcId}"
+
+    deregistration_delay = 20 // Seconds before drop instance
 }
 
 resource "aws_lb_listener_rule" "host_based_routing" {

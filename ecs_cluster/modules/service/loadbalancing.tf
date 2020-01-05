@@ -25,7 +25,7 @@ resource "aws_appautoscaling_policy" "scale_up" {
 
   step_scaling_policy_configuration {
     adjustment_type         = "ChangeInCapacity"
-    cooldown                = 60
+    cooldown                = 20
     metric_aggregation_type = "Average"
 
     step_adjustment {
@@ -41,7 +41,7 @@ resource "aws_cloudwatch_metric_alarm" "service_scale_out_alarm" {
   evaluation_periods  = "1"
   metric_name         = "MyTestMetric"
   namespace           = "TEST/ECS"
-  period              = "60"
+  period              = "20"
   statistic           = "Average"
   threshold           = "70"
 
@@ -67,7 +67,7 @@ resource "aws_appautoscaling_policy" "scale_down" {
 
   step_scaling_policy_configuration {
     adjustment_type         = "ChangeInCapacity"
-    cooldown                = 60
+    cooldown                = 20
     metric_aggregation_type = "Average"
 
     step_adjustment {
