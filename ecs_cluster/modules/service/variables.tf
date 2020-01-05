@@ -20,3 +20,9 @@ variable "MinCount" {
 
 variable "MaxCount" {
 }
+
+variable "AutoscalingMetricsName" {
+}
+
+variable "AutoscalingMetricsNamespace" {
+}

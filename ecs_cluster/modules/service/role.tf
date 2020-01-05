@@ -1,6 +1,6 @@
 # Service role configuration:
 
-data "aws_iam_policy_document" "ecs-service-policy" {
+data "aws_iam_policy_document" "ecs_service_policy" {
     statement {
         actions = ["sts:AssumeRole"]
 
@@ -11,19 +11,19 @@ data "aws_iam_policy_document" "ecs-service-policy" {
     }
 }
 
-resource "aws_iam_role" "ecs-service-role" {
+resource "aws_iam_role" "ecs_service_role" {
     name = "${var.ServiceName}-service-role"
     path = "/"
-    assume_role_policy = "${data.aws_iam_policy_document.ecs-service-policy.json}"
+    assume_role_policy = "${data.aws_iam_policy_document.ecs_service_policy.json}"
 }
 
-resource "aws_iam_role_policy_attachment" "ecs-service-role-attachment" {
-    role = "${aws_iam_role.ecs-service-role.name}"
+resource "aws_iam_role_policy_attachment" "ecs_service_role_attachment" {
+    role = "${aws_iam_role.ecs_service_role.name}"
     policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
 }
 
 #Autoscaling role configuration
-data "aws_iam_policy_document" "ecs-autoscaling-policy" {
+data "aws_iam_policy_document" "ecs_autoscaling_policy" {
     statement {
         actions = ["sts:AssumeRole"]
 
@@ -34,18 +34,18 @@ data "aws_iam_policy_document" "ecs-autoscaling-policy" {
     }
 }
 
-resource "aws_iam_role" "ecs-autoscaling-role" {
+resource "aws_iam_role" "ecs_autoscaling_role" {
     name = "${var.ServiceName}-autoscaling-role"
     path = "/"
-    assume_role_policy = "${data.aws_iam_policy_document.ecs-autoscaling-policy.json}"
+    assume_role_policy = "${data.aws_iam_policy_document.ecs_autoscaling_policy.json}"
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_autoscale" {
-    role = "${aws_iam_role.ecs-autoscaling-role.name}"
+    role = "${aws_iam_role.ecs_autoscaling_role.name}"
     policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_cloudwatch" {
-    role = "${aws_iam_role.ecs-autoscaling-role.name}"
+    role = "${aws_iam_role.ecs_autoscaling_role.name}"
     policy_arn = "arn:aws:iam::aws:policy/CloudWatchReadOnlyAccess"
 }

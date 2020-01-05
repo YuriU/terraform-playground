@@ -1,8 +1,10 @@
+# Scaling target
+
 resource "aws_appautoscaling_target" "ecs_target" {
   max_capacity       = "${var.MaxCount}"
   min_capacity       = "${var.MinCount}"
   resource_id        = "service/${var.ClusterName}/${var.ServiceName}"
-  role_arn           = "${aws_iam_role.ecs-autoscaling-role.arn}"
+  role_arn           = "${aws_iam_role.ecs_autoscaling_role.arn}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 
@@ -39,8 +41,8 @@ resource "aws_cloudwatch_metric_alarm" "service_scale_out_alarm" {
   alarm_name          = "${var.ServiceName}_ScaleOut"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "1"
-  metric_name         = "MyTestMetric"
-  namespace           = "TEST/ECS"
+  metric_name         = "${var.AutoscalingMetricsName}"
+  namespace           = "${var.AutoscalingMetricsNamespace}"
   period              = "60"
   statistic           = "Average"
   threshold           = "70"
@@ -81,8 +83,8 @@ resource "aws_cloudwatch_metric_alarm" "service_scale_down_alarm" {
   alarm_name          = "${var.ServiceName}_ScaleDown"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = "1"
-  metric_name         = "MyTestMetric"
-  namespace           = "TEST/ECS"
+  metric_name         = "${var.AutoscalingMetricsName}"
+  namespace           = "${var.AutoscalingMetricsNamespace}"
   period              = "60"
   statistic           = "Average"
   threshold           = "30"

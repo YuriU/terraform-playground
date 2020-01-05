@@ -17,5 +17,8 @@ module "apache" {
     ClusterName                 = "${module.cluster.ClusterName}"
     ListenerArn                 = "${aws_alb_listener.front_end.arn}"
     MinCount                    = 3
-    MaxCount                    = 15
+    MaxCount                    = 15,
+
+    AutoscalingMetricsName      = "MyTestMetric",
+    AutoscalingMetricsNamespace = "TEST/ECS"
 }

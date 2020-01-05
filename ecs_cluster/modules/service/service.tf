@@ -32,7 +32,7 @@ resource "aws_ecs_service" "service" {
     cluster = "${data.aws_ecs_cluster.cluster.arn}"
     task_definition = "${aws_ecs_task_definition.task_definition.family}:${max("${aws_ecs_task_definition.task_definition.revision}", "${data.aws_ecs_task_definition.existing_task_definition.revision}")}"
     desired_count = "${var.MinCount}"
-    iam_role = "${aws_iam_role.ecs-service-role.name}"
+    iam_role = "${aws_iam_role.ecs_service_role.name}"
 
     load_balancer {
         target_group_arn = "${aws_alb_target_group.service_target_group.id}"
