@@ -14,6 +14,9 @@ variable "ListenerArn" {
 
 }
 
-variable "DesiredCount" {
-    default = 1
+variable "MinCount" {
+    default = 3
+}
+
+variable "MaxCount" {
 }

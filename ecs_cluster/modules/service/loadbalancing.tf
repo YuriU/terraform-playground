@@ -1,6 +1,6 @@
 resource "aws_appautoscaling_target" "ecs_target" {
-  max_capacity       = 15
-  min_capacity       = 3
+  max_capacity       = "${var.MaxCount}"
+  min_capacity       = "${var.MinCount}"
   resource_id        = "service/${var.ClusterName}/${var.ServiceName}"
   role_arn           = "${aws_iam_role.ecs-autoscaling-role.arn}"
   scalable_dimension = "ecs:service:DesiredCount"
@@ -41,7 +41,7 @@ resource "aws_cloudwatch_metric_alarm" "service_scale_out_alarm" {
   evaluation_periods  = "1"
   metric_name         = "MyTestMetric"
   namespace           = "TEST/ECS"
-  period              = "20"
+  period              = "60"
   statistic           = "Average"
   threshold           = "70"
 

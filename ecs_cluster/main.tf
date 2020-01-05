@@ -16,5 +16,6 @@ module "apache" {
     ServiceName                 = "apache"
     ClusterName                 = "${module.cluster.ClusterName}"
     ListenerArn                 = "${aws_alb_listener.front_end.arn}"
-    DesiredCount                = 3
+    MinCount                    = 3
+    MaxCount                    = 15
 }
