@@ -14,7 +14,7 @@ module "apache" {
     VpcId                       = "${data.aws_vpc.default.id}"
     LoadBallancerId             = "${aws_alb.main.id}"
     ServiceName                 = "apache"
-    ClusterId                   = "${module.cluster.ClusterId}"
+    ClusterName                 = "${module.cluster.ClusterName}"
     ListenerArn                 = "${aws_alb_listener.front_end.arn}"
     DesiredCount                = 3
 }

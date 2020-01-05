@@ -1,3 +1,7 @@
+data "aws_ecs_cluster" "cluster" {
+  cluster_name = "${var.ClusterName}"
+}
+
 resource "aws_alb_target_group" "service_target_group" {
     name = "ECS-${var.ServiceName}-TargetGroup"
     port = 80
@@ -23,7 +27,7 @@ resource "aws_lb_listener_rule" "host_based_routing" {
 
 resource "aws_ecs_service" "service" {
     name = "${var.ServiceName}"
-    cluster = "${var.ClusterId}"
+    cluster = "${data.aws_ecs_cluster.cluster.arn}"
     task_definition = "${aws_ecs_task_definition.task_definition.family}:${max("${aws_ecs_task_definition.task_definition.revision}", "${data.aws_ecs_task_definition.existing_task_definition.revision}")}"
     desired_count = "${var.DesiredCount}"
     iam_role = "${aws_iam_role.ecs-service-role.name}"
@@ -67,9 +71,9 @@ resource "aws_cloudwatch_metric_alarm" "service_scale_in_alarm" {
 
 resource "aws_appautoscaling_target" "ecs_target" {
   max_capacity       = 15
-  min_capacity       = 1
-  resource_id        = "service/${var.ClusterId}/${var.ServiceName}"
-  role_arn           = "${aws_iam_role.ecs-autoscaling-role.arn}"
+  min_capacity       = 3
+  resource_id        = "service/${var.ClusterName}/${var.ServiceName}"
+  role_arn           = "arn:aws:iam::039810988692:role/apache-autoscaling-role"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 

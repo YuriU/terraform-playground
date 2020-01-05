@@ -1,7 +1,7 @@
 variable "ServiceName" {
 }
 
-variable "ClusterId" {
+variable "ClusterName" {
 }
 
 variable "VpcId" {

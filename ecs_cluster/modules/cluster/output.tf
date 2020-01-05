@@ -1,3 +1,3 @@
-output "ClusterId" {
-	value = "${aws_ecs_cluster.cluster.id}"
+output "ClusterName" {
+	value = "${aws_ecs_cluster.cluster.name}"
 }
