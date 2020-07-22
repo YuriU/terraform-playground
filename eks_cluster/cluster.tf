@@ -11,8 +11,8 @@ data "aws_subnet" "default_subnets" {
   id    = "${data.aws_subnet_ids.default_subnets_ids.ids[count.index]}"
 }
 
-resource "aws_eks_cluster" "example" {
-  name     = "example"
+resource "aws_eks_cluster" "cluster" {
+  name     = "cluster"
   role_arn = "${aws_iam_role.eks-cluster-role.arn}"
 
   vpc_config {
@@ -28,9 +28,9 @@ resource "aws_eks_cluster" "example" {
 }
 
 output "endpoint" {
-  value = "${aws_eks_cluster.example.endpoint}"
+  value = "${aws_eks_cluster.cluster.endpoint}"
 }
 
 output "kubeconfig-certificate-authority-data" {
-  value = "${aws_eks_cluster.example.certificate_authority.0.data}"
+  value = "${aws_eks_cluster.cluster.certificate_authority.0.data}"
 }
