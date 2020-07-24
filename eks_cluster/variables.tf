@@ -1,0 +1,3 @@
+variable "ClusterName" {
+  default = "Cluster"
+}
