@@ -1,3 +1,7 @@
 variable "ClusterName" {
-  default = "Cluster"
+  default = "TestEKSCluster"
+}
+
+variable "InstanceSize" {
+  default = "t2.micro"
 }

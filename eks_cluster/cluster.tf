@@ -12,7 +12,7 @@ data "aws_subnet" "default_subnets" {
 }
 
 resource "aws_eks_cluster" "cluster" {
-  name     = "cluster"
+  name     = "${var.ClusterName}"
   role_arn = "${aws_iam_role.eks-cluster-role.arn}"
 
   vpc_config {

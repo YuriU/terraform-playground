@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "eks-instance-policy" {
 }
 
 resource "aws_iam_role" "eks-cluster-role" {
-    name = "eks-cluster-role"
+    name = "eks-cluster-role-${var.ClusterName}"
     path = "/"
     assume_role_policy = "${data.aws_iam_policy_document.eks-instance-policy.json}"
 }
@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "eks-node-group-policy" {
 }
 
 resource "aws_iam_role" "eks-node-group-role" {
-    name = "eks-node-group-role"
+    name = "eks-node-group-role-${var.ClusterName}"
     path = "/"
     assume_role_policy = "${data.aws_iam_policy_document.eks-node-group-policy.json}"
 }
